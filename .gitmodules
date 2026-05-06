@@ -1,0 +1,3 @@
+[submodule "third_party/usque"]
+	path = third_party/usque
+	url = https://github.com/8DE4732A/usque.git
