@@ -27,7 +27,6 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
     ) { result ->
         if (result.resultCode == Activity.RESULT_OK) {
             ServiceController.startVpn(context)
-            vm.setConnecting()
         }
     }
 
@@ -93,7 +92,6 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
                     when (state.mode) {
                         ServiceMode.SOCKS5 -> {
                             ServiceController.startSocks(context)
-                            vm.setConnecting()
                         }
                         ServiceMode.VPN -> {
                             val vpnIntent = VpnService.prepare(context)
@@ -101,7 +99,6 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
                                 vpnPermissionLauncher.launch(vpnIntent)
                             } else {
                                 ServiceController.startVpn(context)
-                                vm.setConnecting()
                             }
                         }
                     }

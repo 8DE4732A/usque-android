@@ -31,5 +31,14 @@ object UsqueNative {
             }
         }
 
+    suspend fun enrollExisting(configJson: String, jwt: String = ""): String =
+        withContext(Dispatchers.IO) {
+            try {
+                mobile.Mobile.enrollExisting(configJson, jwt)
+            } catch (e: Exception) {
+                throw ErrorCodes.parse(e)
+            }
+        }
+
     fun getController(): mobile.TunnelController = mobile.Mobile.newTunnelController()
 }

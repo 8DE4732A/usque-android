@@ -42,21 +42,25 @@ class SocksProxyService : Service() {
         val settings = repo.loadSettings()
 
         controller = UsqueNative.getController()
+        TunnelState.update("connecting")
 
         scope.launch {
             try {
+                TunnelState.update("connected")
                 controller?.startSocks(
                     configJson,
                     settings.listenAddr,
                     settings.dnsAddrs,
                     settings.sni,
-                    settings.mtu,
+                    settings.mtu.toLong(),
                     settings.useIPv6,
                     settings.useHTTP2,
                 )
             } catch (e: Exception) {
                 Log.e(TAG, "SOCKS5 tunnel error: ${e.message}")
+                TunnelState.update("error:${e.message}")
             } finally {
+                TunnelState.update("idle")
                 stopSelf()
             }
         }
@@ -67,12 +71,14 @@ class SocksProxyService : Service() {
     private fun stopTunnel() {
         controller?.stop()
         controller = null
+        TunnelState.update("idle")
         stopForeground(STOP_FOREGROUND_REMOVE)
         stopSelf()
     }
 
     override fun onDestroy() {
         controller?.stop()
+        TunnelState.update("idle")
         job.cancel()
         super.onDestroy()
     }

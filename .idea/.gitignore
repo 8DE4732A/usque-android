@@ -1,3 +1,10 @@
 # Default ignored files
 /shelf/
 /workspace.xml
+
+# Machine-specific device/deployment state
+/deviceManager.xml
+/deploymentTargetSelector.xml
+/caches/
+/deviceStreaming.xml
+/markdown.xml

@@ -4,6 +4,8 @@ import android.content.Context
 import androidx.security.crypto.EncryptedSharedPreferences
 import androidx.security.crypto.MasterKey
 import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.jsonObject
 
 private const val PREF_FILE = "usque_secure_prefs"
 private const val KEY_CONFIG = "config_json"
@@ -42,6 +44,18 @@ class ConfigRepository(context: Context) {
 
     fun clearConfig() {
         prefs.edit().remove(KEY_CONFIG).apply()
+    }
+
+    fun updateConfigFields(fields: Map<String, String>) {
+        val existing = loadConfigJson() ?: return
+        val merged = try {
+            val base = Json.parseToJsonElement(existing).jsonObject.toMutableMap()
+            fields.forEach { (k, v) -> base[k] = Json.parseToJsonElement("\"$v\"") }
+            JsonObject(base).toString()
+        } catch (_: Exception) {
+            return
+        }
+        saveConfig(merged)
     }
 
     fun saveSettings(settings: Settings) {

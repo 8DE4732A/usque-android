@@ -1,15 +1,36 @@
+# Gradle
 *.iml
 .gradle
-/local.properties
+/build
+/captures
+local.properties
+
+# Android Studio / IntelliJ
 /.idea/caches
 /.idea/libraries
 /.idea/modules.xml
 /.idea/workspace.xml
 /.idea/navEditor.xml
 /.idea/assetWizardSettings.xml
-.DS_Store
-/build
-/captures
+/.idea/deploymentTargetSelector.xml
+/.idea/deviceManager.xml
+/.idea/deviceStreaming.xml (via caches)
 .externalNativeBuild
 .cxx
-local.properties
+
+# Kotlin
+.kotlin/
+
+# macOS
+.DS_Store
+
+# Signing — never commit keystores or key properties
+*.jks
+*.keystore
+key.properties
+
+# Generated native library (built by scripts/build-aar.sh)
+# tracked via app/libs/.gitignore
+
+# Source images used for icon generation (not needed in repo)
+Gemini_Generated_Image_*.png

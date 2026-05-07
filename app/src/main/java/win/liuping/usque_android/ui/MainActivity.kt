@@ -12,19 +12,27 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import win.liuping.usque_android.data.ConfigRepository
 import win.liuping.usque_android.ui.screens.HomeScreen
 import win.liuping.usque_android.ui.screens.OnboardingScreen
 import win.liuping.usque_android.ui.screens.SettingsScreen
+import win.liuping.usque_android.ui.screens.ZeroTrustAuthScreen
 import win.liuping.usque_android.ui.theme.UsqueandroidTheme
+import win.liuping.usque_android.ui.viewmodel.OnboardingViewModel
 
 object Routes {
     const val ONBOARDING = "onboarding"
     const val HOME = "home"
     const val SETTINGS = "settings"
+    const val ZERO_TRUST_AUTH = "zero_trust_auth/{teamName}"
+
+    fun zeroTrustAuth(teamName: String) = "zero_trust_auth/$teamName"
 }
 
 class MainActivity : ComponentActivity() {
@@ -71,18 +79,52 @@ fun UsqueNavHost(hasConfig: Boolean) {
             startDestination = startDestination,
             modifier = Modifier.padding(innerPadding),
         ) {
-            composable(Routes.ONBOARDING) {
-                OnboardingScreen(onSuccess = {
-                    navController.navigate(Routes.HOME) {
-                        popUpTo(Routes.ONBOARDING) { inclusive = true }
-                    }
-                })
+            composable(Routes.ONBOARDING) { backStackEntry ->
+                // Share the OnboardingViewModel so ZeroTrustAuthScreen can call register()
+                val vm: OnboardingViewModel = viewModel(backStackEntry)
+                OnboardingScreen(
+                    vm = vm,
+                    onSuccess = {
+                        navController.navigate(Routes.HOME) {
+                            popUpTo(Routes.ONBOARDING) { inclusive = true }
+                        }
+                    },
+                    onOpenZeroTrustAuth = { teamName ->
+                        navController.navigate(Routes.zeroTrustAuth(teamName))
+                    },
+                )
+            }
+            composable(
+                route = Routes.ZERO_TRUST_AUTH,
+                arguments = listOf(navArgument("teamName") { type = NavType.StringType }),
+            ) { backStackEntry ->
+                val teamName = backStackEntry.arguments?.getString("teamName") ?: ""
+                // Get the OnboardingViewModel from the Onboarding back-stack entry
+                val onboardingEntry = remember(backStackEntry) {
+                    navController.getBackStackEntry(Routes.ONBOARDING)
+                }
+                val vm: OnboardingViewModel = viewModel(onboardingEntry)
+                ZeroTrustAuthScreen(
+                    teamName = teamName,
+                    onTokenReceived = { token ->
+                        vm.register(jwt = token, acceptTos = true)
+                        navController.popBackStack(Routes.ONBOARDING, inclusive = false)
+                    },
+                    onBack = { navController.popBackStack() },
+                )
             }
             composable(Routes.HOME) {
                 HomeScreen(viewModel())
             }
             composable(Routes.SETTINGS) {
-                SettingsScreen(viewModel())
+                SettingsScreen(
+                    viewModel(),
+                    onReRegister = {
+                        navController.navigate(Routes.ONBOARDING) {
+                            popUpTo(0) { inclusive = true }
+                        }
+                    },
+                )
             }
         }
     }
