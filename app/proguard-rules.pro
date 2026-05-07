@@ -23,3 +23,8 @@
 # Keep gomobile JNI symbols
 -keep class go.** { *; }
 -keep class mobile.** { *; }
+
+# Suppress missing annotation classes from errorprone and javax (compile-time only, not needed at runtime)
+-dontwarn com.google.errorprone.annotations.**
+-dontwarn javax.annotation.**
+-dontwarn javax.annotation.concurrent.**
