@@ -10,4 +10,5 @@ data class Settings(
     val mtu: Int = 1280,
     val dnsAddrs: String = "1.1.1.1,1.0.0.1",
     val listenAddr: String = "127.0.0.1:1080",
+    val upstreamSocks5: String = "",
 )

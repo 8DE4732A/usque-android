@@ -41,4 +41,6 @@ object UsqueNative {
         }
 
     fun getController(): mobile.TunnelController = mobile.Mobile.newTunnelController()
+
+    fun getTun2SocksController(): mobile.Tun2SocksController = mobile.Mobile.newTun2SocksController()
 }

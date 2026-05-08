@@ -110,6 +110,15 @@ fun SettingsScreen(
         )
 
         OutlinedTextField(
+            value = settings.upstreamSocks5,
+            onValueChange = { vm.update(settings.copy(upstreamSocks5 = it)) },
+            label = { Text("Upstream SOCKS5 (tun2socks mode)") },
+            placeholder = { Text("100.96.0.1:1080") },
+            modifier = Modifier.fillMaxWidth(),
+            singleLine = true,
+        )
+
+        OutlinedTextField(
             value = settings.mtu.toString(),
             onValueChange = { s -> s.toIntOrNull()?.let { vm.update(settings.copy(mtu = it)) } },
             label = { Text("MTU") },

@@ -55,6 +55,7 @@ class SocksProxyService : Service() {
                     settings.mtu.toLong(),
                     settings.useIPv6,
                     settings.useHTTP2,
+                    null,
                 )
             } catch (e: Exception) {
                 Log.e(TAG, "SOCKS5 tunnel error: ${e.message}")

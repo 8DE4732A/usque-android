@@ -6,25 +6,14 @@ import androidx.core.content.ContextCompat
 
 object ServiceController {
 
-    fun startSocks(context: Context) {
-        val intent = Intent(context, SocksProxyService::class.java)
+    fun startTun2Socks(context: Context) {
+        val intent = Intent(context, Tun2SocksVpnService::class.java)
         ContextCompat.startForegroundService(context, intent)
     }
 
-    fun stopSocks(context: Context) {
-        val intent = Intent(context, SocksProxyService::class.java)
-            .setAction(SocksProxyService.ACTION_STOP)
+    fun stopTun2Socks(context: Context) {
+        val intent = Intent(context, Tun2SocksVpnService::class.java)
+            .setAction(Tun2SocksVpnService.ACTION_STOP)
         context.startService(intent)
-    }
-
-    fun stopVpn(context: Context) {
-        val intent = Intent(context, UsqueVpnService::class.java)
-            .setAction(UsqueVpnService.ACTION_STOP)
-        context.startService(intent)
-    }
-
-    fun startVpn(context: Context) {
-        val intent = Intent(context, UsqueVpnService::class.java)
-        ContextCompat.startForegroundService(context, intent)
     }
 }
